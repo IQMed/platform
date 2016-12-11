@@ -1,4 +1,5 @@
 var scripts = {
+
     aliases : {
 
         "react/lib": "/node_modules/react/lib",
@@ -38,6 +39,7 @@ var scripts = {
         "flot-pie": "/bower_components/Flot/jquery.flot.pie.js",
         "flot-time": "/bower_components/Flot/jquery.flot.time.js",
         "flot-tooltip": "/bower_components/flot.tooltip/js/jquery.flot.tooltip.min.js",
+
 
         "raphael": "/bower_components/raphael/raphael-min.js",
         "morris": "/bower_components/morris.js/morris.min.js",

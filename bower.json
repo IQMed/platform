@@ -37,9 +37,9 @@
     "datatables-responsive": "~2.0.0",
     "Jcrop": "jcrop#~2.0.4",
     "markdown": "~0.5.0",
-    "bootstrap-markdown": "~2.9.0",
+    "bootstrap-markdown": "~2.10.0",
     "jquery-nestable": "*",
-    "lodash": "~3.10.1",
+    "lodash": "^4",
     "seiyria-bootstrap-slider": "~6.0.4",
     "bootstrap-progressbar": "~0.9.0",
     "jquery-validation": "~1.14.0",
@@ -50,7 +50,7 @@
     "bootstrap-duallistbox": "~3.0.5",
     "bootstrap3-fontawesome-timepicker": "~0.2.6",
     "clockpicker": "~0.0.7",
-    "bootstrap-colorpicker": "*",
+    "bootstrap-colorpicker": "~2.3.6",
     "bootstrap-tagsinput": "~0.7.1",
     "jquery-knob": "~1.2.13",
     "x-editable": "~1.5.1",
@@ -59,9 +59,12 @@
     "ckeditor": "~4.5.6",
     "to-markdown": "~1.3.0",
     "he": "~0.5.0",
-    "highchartTable": "~2.0.0"
+    "highchartTable": "~2.0.0",
+    "font-awesome": "4.5.0",
+    "raphael": "~2.2.7"
   },
   "resolutions": {
-    "font-awesome": "^4.7.0"
+    "jquery": "2.2.0",
+    "font-awesome": "4.5.0"
   }
 }

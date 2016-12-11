@@ -3,6 +3,7 @@ import {Route, Redirect, IndexRoute} from 'react-router'
 
 import Layout from './pages/layout/Layout.jsx'
 
+
 import Home from './pages/home/Home.jsx'
 
 import LockedScreen from './pages/misc/LockedScreen.jsx'

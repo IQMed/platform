@@ -2,12 +2,9 @@ import React from 'react'
 import ScriptLoader from '../../utils/mixins/ScriptLoader.jsx'
 import {findDOMNode} from 'react-dom'
 
-require('bootstrap-markdown');
-
-let MarkdownEditor = React.createClass({
-    mixins: [ScriptLoader],
+const MarkdownEditor = React.createClass({
     componentDidMount: function () {
-        this.loadScript('/vendor.ui.js').then(function(){
+        ScriptLoader.loadScript('/vendor.ui.js').then(function(){
             $(findDOMNode(this)).markdown()
         }.bind(this))
     },

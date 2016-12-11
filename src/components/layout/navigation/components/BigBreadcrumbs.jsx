@@ -1,6 +1,5 @@
 import React from 'react'
 import Reflux from 'reflux'
-import _ from 'lodash'
 
 import NavigationStore from '../stores/NavigationStore'
 
@@ -39,13 +38,13 @@ let BigBreadcrumbs = React.createClass({
     },
 
     render: function () {
-        var first = _.first(this.state.items);
+        var first = _.head(this.state.items);
 
         return (
             <div className={this.props.className + ' big-breadcrumbs'}>
                 <h1 className="page-title txt-color-blueDark">
                     <i className={this.state.icon}/>{' ' + first}
-                    {_.rest(this.state.items).map(function (item) {
+                    {_.tail(this.state.items).map(function (item) {
                         return <span key={_.uniqueId('big-breadcrumb-')}>
                             <span className="page-title-separator">&gt;</span>
                             {item}</span>

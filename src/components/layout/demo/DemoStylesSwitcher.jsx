@@ -3,8 +3,6 @@ import Reflux from 'reflux'
 import LinkedStateMixin from 'react-addons-linked-state-mixin'
 import {findDOMNode} from 'react-dom'
 
-import _ from 'lodash'
-
 import DemoStore from './DemoStore'
 import DemoActions from './DemoActions'
 
@@ -86,7 +84,11 @@ let DemoStylesSwitcher = React.createClass({
     _processBody: function() {
         let state = this.state;
 
+<<<<<<< HEAD
         $body.removeClass(_.pluck(state.skins, 'name').join(' '));
+=======
+        $body.removeClass(_.map(state.skins, 'name').join(' '));
+>>>>>>> 0da5de72d4180f866a5c8640e783e2662bd50d1d
         $body.addClass(state.skin.name);
         $("#logo img").attr('src', state.skin.logo);
 

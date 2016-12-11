@@ -1,6 +1,6 @@
 import React from 'react'
 
-//import _ from 'lodash'
+import _ from 'lodash'
 
 import SubHeader from '../layout/SubHeader.jsx'
 import BigBreadcrumbs from '../../../components/layout/navigation/components/BigBreadcrumbs.jsx'
