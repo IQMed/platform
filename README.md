@@ -1,8 +1,10 @@
-Platform
-======================
+# Platform #
 
-development
------------
+## Works ##
+* scaffold with express and webpack-dev-middleware
+
+## development ##
+
 To run the code in your development environment:
 
 1. Clone this repo
@@ -11,7 +13,7 @@ To run the code in your development environment:
 
 Now with all dependencies installed
 
-4. Start the development server for seed project with `npm run dev`
-5. Point your browser to [http://localhost:14602](http://localhost:14602)
+4. Start the development server for seed project with `npm start`
+5. Point your browser to [http://localhost:3000](http://localhost:3000)
 
 ***********************************************
