@@ -2,7 +2,7 @@ var _ = require('lodash');
 var path = require('path');
 var webpack = require('webpack');
 var Clean = require('clean-webpack-plugin');
-var baseConfig = require('./base.config')
+var baseConfig = require('./base.config');
 var scripts = require('./scripts');
 
 

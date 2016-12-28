@@ -1,7 +1,7 @@
-import React from 'react'
-import _ from 'lodash'
-import ScriptLoader from '../../utils/mixins/ScriptLoader.jsx'
-import {findDOMNode} from 'react-dom'
+import React from 'react';
+import _ from 'lodash';
+import ScriptLoader from '../../utils/mixins/ScriptLoader.jsx';
+import {findDOMNode} from 'react-dom';
 
 
 
@@ -9,8 +9,8 @@ let UiValidate = React.createClass({
 
     mixins: [ScriptLoader],
     componentDidMount: function () {
-        this.loadScript('/vendor.ui.js').then(function(){
-            let form = $(findDOMNode(this))
+        this.loadScript('/vendor.js').then(function(){
+            let form = $(findDOMNode(this));
             let validateCommonOptions =  {
                 rules: {},
                 messages: {},
@@ -32,7 +32,7 @@ let UiValidate = React.createClass({
                         error.insertAfter(element);
                     }
                 }
-            }
+            };
 
             form.find('[data-smart-validate-input], [smart-validate-input]').each(function () {
                 var $input = $(this), fieldName = $input.attr('name');
@@ -62,21 +62,21 @@ let UiValidate = React.createClass({
                             if(!validateCommonOptions.messages[fieldName])
                                 validateCommonOptions.messages[fieldName] = {};
 
-                            var messageKey = key.toLowerCase().replace(/^message/,'')
+                            var messageKey = key.toLowerCase().replace(/^message/,'');
                             validateCommonOptions.messages[fieldName][messageKey] = value;
                         }
                     });
                 }
             });
 
-            form.validate(_.extend(validateCommonOptions, this.props.options))
-        }.bind(this))
+            form.validate(_.extend(validateCommonOptions, this.props.options));
+        }.bind(this));
     },
     render: function () {
         return (
             this.props.children
-        )
+        );
     }
 });
 
-export default UiValidate
+export default UiValidate;

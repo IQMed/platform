@@ -48,7 +48,7 @@ let ToggleShortcut = React.createClass({
 	},
 	render: function(){
 		return (
-			<a href-void onClick={this.toggleShortcut}>{this.props.children}</a>
+			<a onClick={this.toggleShortcut}>{this.props.children}</a>
 		)
 	}
 

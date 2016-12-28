@@ -29,7 +29,7 @@ let FullScreen = React.createClass({
 	render: function(){
 		return (
 			<div id="fullscreen" onClick={this.handleToggle} className={this.props.className}>
-            	<span> <a href-void title="Full Screen"><i
+            	<span> <a title="Full Screen"><i
 	            	className="fa fa-arrows-alt"/></a> </span>
         	</div>
     	)	

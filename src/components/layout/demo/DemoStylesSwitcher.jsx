@@ -25,9 +25,9 @@ let DemoStylesSwitcher = React.createClass({
 
         return (
             <div className="demo" ref="demoStylesSwitcher">
-				<span id="demo-setting" onClick={this._toggleActivate}>
-			    	<i className="fa fa-cog txt-color-blueDark"/>
-			    </span>
+                <span id="demo-setting" onClick={this._toggleActivate}>
+                    <i className="fa fa-cog txt-color-blueDark"/>
+                </span>
                 <form>
                     <legend className="no-padding margin-bottom-10">Layout Options</legend>
                     <section>
@@ -84,11 +84,7 @@ let DemoStylesSwitcher = React.createClass({
     _processBody: function() {
         let state = this.state;
 
-<<<<<<< HEAD
-        $body.removeClass(_.pluck(state.skins, 'name').join(' '));
-=======
         $body.removeClass(_.map(state.skins, 'name').join(' '));
->>>>>>> 0da5de72d4180f866a5c8640e783e2662bd50d1d
         $body.addClass(state.skin.name);
         $("#logo img").attr('src', state.skin.logo);
 
