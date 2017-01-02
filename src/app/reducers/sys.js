@@ -1,7 +1,7 @@
 import {
   SYS_ERROR, RESET_SYS_ERROR, SYS_LOG, RESET_SYS_LOG,
   RESET_LOCAL_LOG, LOCAL_LOG, LOCATION_CHANGE
-} from './userActions';
+} from './ActionTypes';
 import update from 'immutability-helper';
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
   isLoading: false
 };
 
-export default function sys(state = initialState, action) {
+const sysReducer = (state = initialState, action) => {
   switch(action.type) {
     case SYS_ERROR:
       return update(state, {type: {$set: 'error'}, msg: {$set: action.msg}, isLoading: {$set: false}});
@@ -31,4 +31,6 @@ export default function sys(state = initialState, action) {
     default:
       return state;
   }
-}
+};
+
+export default sysReducer;

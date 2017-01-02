@@ -1,14 +1,20 @@
 var path = require('path');
 var webpack = require('webpack');
 var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");
+var ExtractTextPlugins = require("extract-text-webpack-plugin");
 
 const rootDir = path.resolve(__dirname, '../');
 
 module.exports = {
     devtool: 'eval-source-map',
+    //devtool: 'eval',
     context: rootDir,
     entry: {
-        common: ["react", "react-router", "react-router-redux"],
+        common: [
+            'webpack-hot-middleware/client?reload=true',
+            'react', 'react-redux', 'react-router', 'react-router-redux',
+            'semantic-ui-react'
+        ],
         bundle: [
             'webpack-hot-middleware/client?reload=true',
             path.resolve(rootDir, 'src/app/main.js')
@@ -38,18 +44,19 @@ module.exports = {
                 loader: 'json'
             },{
                 test: /\.css/,
-                exclude: [/node_modules/, /bower_components/],
-                loader: 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]'
+                exclude: [/bower_components/],
+                loader: ExtractTextPlugins.extract("style", "css")
 
             },{
-                test: /(\.gif|\.png)/,
-                exclude: [/node_modules/, /bower_components/],
+                test: /\.(gif|png|eot|woff|woff2|ttf|svg)/,
+                exclude: [/bower_components/],
                 loader: 'url?limit=10000'
 
             }]
     },
     plugins: [
-        new CommonsChunkPlugin({name: "common"}),
+        new CommonsChunkPlugin("common", "common.js"),
+        new ExtractTextPlugins("[name].css"),
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),

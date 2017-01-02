@@ -1,29 +1,29 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {Router, browserHistory} from 'react-router';
+import {Router, hashHistory} from 'react-router';
 import {Provider} from 'react-redux';
-import {routerReducer, syncHistoryWithStore, routerMiddleware} from 'react-router-redux';
-import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {syncHistoryWithStore, routerMiddleware} from 'react-router-redux';
+import {createStore, compose, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 
 import Routes from './Routes';
-import userReducer from './reducers/user';
-import sysReducer from './reducers/sys';
+import rootReducer from './reducers';
+import {checkAuthentication} from './reducers/userActions';
 
-const reducers = combineReducers({
-  routing: routerReducer,
-  user: userReducer,
-  sys: sysReducer
-});
+/* eslint-disable no-underscore-dangle */
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+/* eslint-enable */
 
-const routingMiddleware = routerMiddleware(browserHistory);
+const routingMiddleware = routerMiddleware(hashHistory);
 
 const store = createStore(
-  reducers,
-  applyMiddleware(thunk, routingMiddleware)
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk, routingMiddleware))
 );
+// load authentication from localStorage
+store.dispatch(checkAuthentication());
 
-const history = syncHistoryWithStore(browserHistory, store);
+const history = syncHistoryWithStore(hashHistory, store);
 
 var rootInstance = render((
   <Provider store={store}>
@@ -34,10 +34,13 @@ var rootInstance = render((
 ), document.getElementById('app-root'));
 
 if (module.hot) {
-    require('react-hot-loader/Injection').RootInstanceProvider.injectProvider({
-        getRootInstances: function () {
-            // Help React Hot Loader figure out the root component instances on the page:
-            return [rootInstance];
-        }
-    });
+  require('react-hot-loader/Injection').RootInstanceProvider.injectProvider({
+    getRootInstances: function () {
+      // Help React Hot Loader figure out the root component instances on the page:
+      return [rootInstance];
+    }
+  });
+  module.hot.accept('./reducers', () =>
+    store.replaceReducer(require('./reducers').default)
+  );
 }
