@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>IQMedInnovation</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- Demo purpose only: goes with demo.js, you can delete this css when designing your own WebApp -->
+  <link rel="stylesheet" type="text/css" href="bundle.css">
+  <link rel="stylesheet" type="text/css" media="screen" href="styles/css/app.css">
+
+  <!-- #FAVICONS -->
+  <link rel="shortcut icon" href="styles/img/favicon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div id="app-root">
+    <div id="login-page" class="ui centered stretched middle aligned three column grid">
+      <div class="column">
+        <div class="centered">
+          <img class="ui image" src="styles/img/iqmed.png" height="160" width="160">
+        </div>
+        <div class="user-form">
+          <div class="ui attached message dark">
+            <div class="content">
+              <div class="header">Welcome to IQMED Research Platform</div>
+              <p>Fill out the form below to sign-in</p>
+            </div>
+          </div>
+          <form action="/login" method="POST" class="ui form attached fluid segment">
+          <div class="field">
+            <label>Email</label>
+            <div class="ui input">
+            <input type="email" name="email" placeholder="Email">
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="ui input">
+            <input type="password" name="password">
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui checkbox">
+            <input type="checkbox" name="noExpire" readonly="" tabindex="0" value="on">
+            <label>Remember me</label>
+            </div>
+          </div>
+          <input type="hidden" name="_csrf" value="<%= nonce %>" />
+          <button class="ui blue button">Login</button>
+          </form>
+          <% if (message.length > 0) { %>
+          <div class="ui bottom attached negative message">
+            <i aria-hidden="true" class="warning icon"></i><%= message[0] %>
+          </div>
+          <% } else { %>
+          <div class="ui bottom attached info message">
+            <i aria-hidden="true" class="help icon"></i> Didn't remember a password? contract&nbsp;
+            <a href="mailto:dev@mg.iqmedinnovation.com">dev@mg.iqmedinnovation.com</a>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      </div>
+  </div>
+</body>
+</html>

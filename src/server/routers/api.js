@@ -4,7 +4,6 @@ const uuid = require('uuid/v4');
 const passport = require('passport');
 
 const Account = require('../models/account');
-const Session = require('../models/session');
 
 const initApi = app => {
   /* API ROUTES ----------------------------------------------------------------*/
@@ -55,6 +54,7 @@ const initApi = app => {
           if (err)
             return res.status(401).json({message: 'internal server error', err});
           if (valid) {
+            /*
             const authId = uuid();
             var session = new Session({email: account.email, authId});
             session.save( err => {
@@ -65,6 +65,7 @@ const initApi = app => {
               const token = jwt.sign(payload, app.get('superSecret'), options);
               return res.json({message: "ok", token, email: account.email, name: account.name});
             });
+            */
           } else {
             return res.status(401).json({message: 'authentication fail'});
           }
@@ -73,18 +74,6 @@ const initApi = app => {
     });
   });
 
-  apiRoutes.get('/logout', (req, res, next) => {
-    passport.authenticate('jwt', {session: false, failureFlush: 'test'}, (err, user, info) => {
-      if (err) return res.json({err});
-      if (user)
-        Session.remove({authId: req.user.authId}, err => {
-          if (err) return res.status(500).json({message: "internal server error: cannot remove session with token id"});
-          else return res.json({message: "ok"});    
-        });
-      else
-        return res.status(401).json({message: info.message});
-    })(req, res, next);
-  });
   app.use('/api', apiRoutes);
   /* END API ROUTES ------------------------------------------------------------*/
 };

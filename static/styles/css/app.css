@@ -1,14 +1,18 @@
 html, body, #app-root {height:100%;min-height:100%;}
+#app-root {background-color:#fff;}
 #login-page {background-color: #797e7f;height:100%;}
+#login-page.ui.grid {margin:0;}
+.centered {margin: 0 auto;}
 .ui.message.dark {background-color:#333;color:#eee;}
 .ui.message.error {background-color:#f33;color:#fff;font-weight:bold;}
 .user-form {margin-top:16px;box-shadow:0 0 3px 1px #aaa}
 
-#app-header {background-color:#fcfcfc;border-bottom:1px solid #ddd;padding:2px 0 0 0;}
-#app-header h5 {padding:4px 16px 4px 8px;margin:0;display:inline;}
-#app-page-loading {background-color:#151515;width:100%;height:100%;position:absolute;z-index:9999;}
-#app-page-loading .ui.loader:before {border-color:#fff;}
-#app-page-loading .ui.loader:after {border-color:#03f transparent transparent;}
+#app-header {background-color:#fcfcfc;border-bottom:1px solid #ddd;padding:8px 0 0 0;}
+#app-header h5 {padding:0 16px 0 8px;margin:0;display:inline;}
+#app-page-loading {background-color:#fff;width:100%;height:100%;position:absolute;z-index:9999;}
+#app-page-loading .ui.loader:before {border-color:#03f;}
+#app-page-loading .ui.loader:after {border-color:#fff transparent transparent;}
+#app-page-loading .text.loader {width:100%;position:absolute;top:50%;left:0;margin-top:2.3rem;text-align:center;color:#000;}
 .clearfix {clear:both;height:0;margin:0;font-size: 1px;line-height: 0;content: "";}
 .ui.link.list a.item:hover {color:#00e;}
 .ui.link.list a.item.active {color:#00e;}
