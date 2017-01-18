@@ -6,17 +6,17 @@ var ExtractTextPlugins = require("extract-text-webpack-plugin");
 const rootDir = path.resolve(__dirname, '../');
 
 module.exports = {
-    devtool: 'eval-source-map',
-    //devtool: 'eval',
+    //devtool: 'eval-source-map',
+    devtool: 'eval',
     context: rootDir,
     entry: {
         common: [
             'webpack-hot-middleware/client?reload=true',
             'react', 'react-redux', 'react-router', 'react-router-redux',
-            'semantic-ui-react'
         ],
         bundle: [
             'webpack-hot-middleware/client?reload=true',
+            path.resolve(rootDir, 'static/app.sass'),
             path.resolve(rootDir, 'src/app/main.js')
         ]
     },
@@ -45,14 +45,20 @@ module.exports = {
             },{
                 test: /\.css/,
                 exclude: [/bower_components/],
-                loader: ExtractTextPlugins.extract("style", "css")
+                loader: ExtractTextPlugins.extract(["style", "raw", "postcss"])
 
+            },{
+                test: /\.s[ac]ss$/,
+                loader: ExtractTextPlugins.extract(["raw", "sass?sourceMap"])
             },{
                 test: /\.(gif|png|eot|woff|woff2|ttf|svg)/,
                 exclude: [/bower_components/],
                 loader: 'url?limit=10000'
 
             }]
+    },
+    resolve: {
+        modulesDirectories: ['./bower_components', 'node_modules']
     },
     plugins: [
         new CommonsChunkPlugin("common", "common.js"),

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>IQMedInnovation</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/bundle.css">
+
+  <!-- #FAVICONS -->
+  <link rel="shortcut icon" href="/img/favicon/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div id="login-page" class="hero is-fullheight">
+    <div class="hero-body">
+      <div class="login-container">
+        <h1 class="title has-text-centered">IQMED INNOVATION PLATFORM</h1>
+        <% if (error) { %>
+        <div class="notification is-danger">
+          <i class="fa fa-warning-triangle"></i><%= error %>
+        </div>
+        <% } else { %>
+        <div class="notification has-text-centered">
+          <i class="fa fa-question"></i> Internal Server Error !!<br />
+          contract 
+          <a href="mailto:dev@mg.iqmedinnovation.com">dev@mg.iqmedinnovation.com</a>
+        </div>
+        <% } %>
+        </form>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <div class="container has-text-centered">Copyright (c) 2016-2017, IQMEDINNOVATION</div>
+    </div>
+  </div>
+</body>
+</html>

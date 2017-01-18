@@ -1,31 +1,33 @@
-const assert = require('assert');
+//const assert = require('assert');
 const path = require('path');
 const compression = require('compression');
 
 const express = require('express');
-const session = require('express-session');
-const MongoSessionStore = require('connect-mongodb-session')(session);
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const csp = require('express-csp-header');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
+const methodOverride = require('method-override');
 const csrf = require('csurf');
+
 
 //const JwtStrategy = require('passport-jwt').Strategy;
 //const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const webpackConfig = require('./webpack/webpack.config');
 const config = require('./config');
-const Account = require('./src/server/models/account');
-const csrfProtection = csrf({ cookie: true });
+const User = require('./src/server/models/user');
+const logined = require('./src/server/logics/ensureLogin.js');
+const Error = require('./src/server/logics/Error');
+
 
 /* CONFIG --------------------------------------------------------------------*/
 const app = express();
@@ -33,14 +35,10 @@ const isDeveloping = process.env.NODE_ENV !== 'production';
 const isSecure = (process.env.HTTPS && process.env.HTTPS !== 'false'  );
 const port = process.env.PORT || 3000;
 app.set('superSecret', config.secret);
-mongoose.connect(config.database);
-const store = new MongoSessionStore({
-  uri: config.database,
-  collection: 'sessions'
-});
-store.on('error', err => { assert.ifError(err); assert.ok(false);}); 
+app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './src/server/views/'));
+mongoose.connect(config.database);
 /* END CONFIG ----------------------------------------------------------------*/
 
 /* AUTH CONFIG ---------------------------------------------------------------*/
@@ -49,8 +47,8 @@ passport.use(new LocalStrategy(
     usernameField: 'email',
   },
   (email, password, done) => {
-    Account.findOne({email}, (err, account) => {
-      const json = {message: 'authentication fail'};
+    User.findOne({email}, (err, account) => {
+      const json = {message: 'Authentication fail'};
       if (err) return done(err);
       if (!account) return done(null, false, json);
       if (!account.verifyPasswordSync(password)) return done(null, false, json);
@@ -58,20 +56,13 @@ passport.use(new LocalStrategy(
     });
   }
 ));
-passport.serializeUser( (account, done) => {
-  const sessionUser = {_id: account._id, name: account.name, email: account.email};
-  done(null, sessionUser);
+passport.serializeUser(function(user, done) {
+  done(null, {id: user._id, name: user.name, email: user.email});
 });
-passport.deserializeUser( (sessionUser, done) => {
-  done(null, sessionUser);
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
 });
-const ensureLogin = (req, res, next) => {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
-    req.session.returnTo = req.originUrl || req.url;
-    return res.redirect('/login');
-  }
-  next();
-};
 /* END AUTH CONFIG -----------------------------------------------------------*/
 
 // static resource
@@ -79,22 +70,9 @@ app.use(express.static(__dirname + '/static'));
 
 /* MIDDLEWARES ---------------------------------------------------------------*/
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(cookieParser('156879qweasacve651hrty65n1my65usffm329[vkljaeioqwmc;asdq3=='));
-app.use(session({
-  secret: config.secret,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
-    secure: isSecure,
-    sameSite: true
-  },
-  store,
-  name: 'iqid23',
-  resave: false,
-  saveUninitialized: true
-}));
-app.use(flash());
+app.use(cookieParser());
+app.use(cookieSession({name: 'qid32', secret: config.secret}));
+//app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
@@ -110,6 +88,10 @@ app.use(csp({
     'block-all-mixed-content': true
   }
 }));
+app.use(methodOverride());
+const csrfProtection = csrf({ cookie: true });
+const parseForm = bodyParser.urlencoded({extended: false});
+const parseJson = bodyParser.json();
 /* END MIDDLEWARES -----------------------------------------------------------*/
 
 /* WEBPACK middleware --------------------------------------------------------*/
@@ -124,6 +106,7 @@ if (isDeveloping) {
       timing: true,
       chunks: false,
       chunkModules: false,
+
       modules: false
     }
   });
@@ -142,30 +125,46 @@ if (isDeveloping) {
 /* END WEBPACK middleware ----------------------------------------------------*/
 
 app.get('/',
-  passport.authenticate('local', {failureRedirect: '/login'}),
   (req, res) => {
-    console.log(req.user, req.session);
-    res.render('index');
+    res.json(req.session);
   }
 );
 app.get('/login', csrfProtection, (req, res) => {
-  const error = req.flash('error');
-  res.render('login', {nonce: req.csrfToken(), message: error});
+  var err;
+  if (req.cookies.error) {
+    err = req.cookies.error;
+    res.clearCookie('error');
+  }
+  res.render('login', {nonce: req.csrfToken(), message: err || ''});
 });
-app.post('/login',
-  csrfProtection,
-  passport.authenticate('local', {successReturnToOrRedirect: '/', failureRedirect: '/login', failureFlash: true})
-);
+app.post('/login', parseForm, csrfProtection, (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return next(err);
+    if(!user) {
+      res.cookie('error', 'Authentication Fail');
+      res.clearCookie('_csrf');
+      return res.redirect('/login');
+    }
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      return res.redirect(req.session.returnTo || '/');
+    });
+  })(req, res, next);
+});
 app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
 });
-app.get('/test', ensureLogin,
+app.get('/test', logined,
   (req, res) => {
-    res.send('ok');
+    res.send(req.user);
   }
 );
-require('./src/server/routers/api')(app, passport);
+require('./src/server/routers/api')(app);
+require('./src/server/routers/project')(app);
+app.use(Error.logError);
+app.use(Error.clientErrorHandler);
+app.use(Error.errorHandler);
 
 app.listen(port, '0.0.0.0', (err) => {
   if (err) {
@@ -174,4 +173,4 @@ app.listen(port, '0.0.0.0', (err) => {
   console.info('==> IQMED-PLATFORM listening on port %s', port);
   if (!isDeveloping) console.info('==> Running in Product Mode');
   if (isSecure) console.info('==>  Enable Secure Mode');
-}); 
+});

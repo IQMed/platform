@@ -9,7 +9,7 @@ import Home from './pages/home';
 import ProjectPage from './pages/project';
 import ProfilePage from './pages/ProfilePage';
 
-import Login from './pages/misc/Login';
+import Blank from './pages/misc/Blank';
 
 // filter: login
 // redirect to /login by default
@@ -36,7 +36,7 @@ const Routes = (
         <Route path="project" component={ProjectPage}/>
         <Route path="profile" component={ProfilePage}/>
       </Route>
-      <Route path="login" component={Login}/>
+      <Route path="login" component={Blank}/>
     </Route>
 );
 

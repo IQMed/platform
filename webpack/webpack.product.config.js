@@ -10,10 +10,12 @@ var config = {
     devtool: 'cheap-module-source-map ',
     context: rootDir,
     entry:{
-        common: ['react', 'react-redux', 'react-router', 'react-router-redux',
-            'semantic-ui-react'
+        common: ['react', 'react-redux', 'react-router', 'react-router-redux'
         ],
-        bundle: path.resolve(rootDir, 'src/app/main.js')
+        bundle: [
+            path.resolve(rootDir, 'static/app.sass'),
+            path.resolve(rootDir, 'src/app/main.js')
+        ]
     },
     output: {
         path: path.resolve(rootDir, 'dist'),
@@ -42,6 +44,9 @@ var config = {
                 exclude: [/bower_components/],
                 loader: ExtractTextPlugins.extract("style", "css")
 
+            },{
+                test: /\.s[ac]ss$/,
+                loader: ExtractTextPlugins.extract(["raw", "sass?sourceMap"])
             },{
                 test: /\.(gif|png|eot|woff|woff2|ttf|svg)/,
                 exclude: [/bower_components/],

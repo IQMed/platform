@@ -1,0 +1,31 @@
+/* extends milligram */
+/* 0c1c8c fff e6e8fa 4166f5 010203 */
+body {color:#010203;font-family: 'Karla', 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif}
+.button, button, input[type='button'], input[type='reset'], input[type='submit'] {background-color: #0c1c8c; border:1px solid #0c1c8c;}
+a, a:visited {color:#4166f5;}
+a:hover {text-decoration:underline;color:#4166f5;}
+input[type='email']:focus,
+input[type='number']:focus,
+input[type='password']:focus,
+input[type='search']:focus,
+input[type='tel']:focus,
+input[type='text']:focus,
+input[type='url']:focus,
+textarea:focus,
+select:focus {border-color:#0c1c8c;}
+
+#login-page {position:relative;height:100vh;text-align:center;background-color:#e6e8fa;}
+#login-page .box {
+  position:absolute;top:14vh;left:50vw;width:400px;height:auto;
+  background-color:#fff;padding:32px;margin-left:-180px;border-radius:8px;
+  border:1px solid #d1d1d1;
+}
+#login-page h1 {font-weight:bold;font-size:26px;}
+#login-page .field {text-align:left;}
+#login-page label {font-size:1.4rem;}
+#login-page .button {margin-top:1rem;}
+.ui.checkbox label {display:inline;}
+.ui.message {color:#010203;padding:16px;border:1px solid #d1d1d1;font-size:1.4rem;line-height: 1.4;}
+.ui.message.info {background-color:#edffff;border-color: #4166f5;color:#4166f5;}
+.ui.message.info a {color:#0c1c8c;}
+.ui.message.negative {background-color:#fee;border-color:#f00;color:#f00;}

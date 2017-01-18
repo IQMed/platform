@@ -1,18 +1,25 @@
 # Platform #
+Platform for IQMED INNOVATION
 
 ## Works ##
 * scaffold with express and webpack-dev-middleware
+* use milligram
+* login with passport-local
 
 ## development ##
 
-To run the code in your development environment:
+1. Install NPM dependencies
 
-1. Clone this repo
-2. Run `npm install`
+`npm install`
 
-Now with all dependencies installed
+2. Then choose one option of these commands
 
-3. Start the development server for seed project with `npm start`
-4. Point your browser to [http://localhost:3000](http://localhost:3000)
+`npm start` start express server with webpack [http://localhost:3000](http://localhost:3000)
+`npm watch` start express server with watching mode (nodemon) [http://localhost:3000](http://localhost:3000)
+`NODE_ENV=production npm start` start express server in production mode [http://localhost:3000](http://localhost:3000)
+`PORT=3333 npm start` start express server in development mode [http://localhost:3333](http://localhost:3333)
+`NODE_ENV=production HTTPS=true npm start` start express server in production mode with secure cookie [http://localhost:3000](http://localhost:3000)
+`npm run build` build the frontend app in development mode (target at ./dist)
+`npm run build:prod` build the frontend app in production mode (target at ./dist)
 
 ***********************************************
