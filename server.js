@@ -162,7 +162,7 @@ app.get('/test', logined,
 );
 require('./src/server/routers/api')(app);
 require('./src/server/routers/project')(app);
-app.use(Error.logError);
+//app.use(Error.logError);
 app.use(Error.clientErrorHandler);
 app.use(Error.errorHandler);
 

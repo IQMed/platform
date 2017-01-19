@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var Client = require('./client');
 var Schema = mongoose.Schema;
 
 var Project = new Schema({
@@ -7,7 +6,7 @@ var Project = new Schema({
   name: {type: String, required: true, index: true},
   description: {type: String},
   createTime: {type: Date, default: Date.now},
-  clients: [Client.schema],
+  clients: [{}],
   groups: [{}],
   rules: [{}]
 });

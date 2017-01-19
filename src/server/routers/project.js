@@ -1,14 +1,12 @@
 const assert = require('assert');
 const express =  require('express');
 const bodyParser = require('body-parser');
-const ObjectId = require('mongoose').Types.ObjectId;
-//const MongoClient = require('mongodb').MongoClient;
 const randomstring = require('randomstring');
 
 const Project = require('../models/project');
 const User = require('../models/user');
+const Client = require('../models/client');
 const logined = require('../logics/ensureLogin');
-const jsonp = require('../utils').jsonp;
 
 const route = app => {
   var routes = express.Router();
@@ -22,10 +20,9 @@ const route = app => {
     req.accepts(['text', 'json']);
     const {id} = req.user;
     assert(id);
-    User.findOne({_id: ObjectId(id)}, 'roles', (err, user) => {
+    User.findById(id, 'roles', (err, user) => {
       if (err) return res.json(err);
-      if (req.query.callback) return res.send(jsonp(req.query.callback, user.roles));
-      return res.json(user.roles);
+      return res.jsonp(user.roles);
     });
   });
   
@@ -37,10 +34,12 @@ const route = app => {
     Project.findOne({name}, (err, project) => {
       if (err) return res.json({error: err});
       if (!project) return res.json({error: 'not found'});
-      if (req.query.callback) return res.send(jsonp(req.query.callback, project));
-      return res.json(project);
+      return res.jsonp(project);
     });
   });
+
+  require('./record')(routes);
+  require('./client')(routes);
   
   // Create Project with the name and description
   // usage: POST name=&desc=
@@ -64,8 +63,8 @@ const route = app => {
     });
     project.save((err, project) => {
       assert(!err);
-      User.findOneAndUpdate({_id: ObjectId(id)}, {
-        $push: {
+      User.findByIdAndUpdate(id, {
+        $addToSet: {
           roles: {
             role: "OWNER",
             project: _name
@@ -74,30 +73,149 @@ const route = app => {
       }, (err) => {
         assert(!err);
       });
-      res.json(project);
+      res.jsonp(project);
     });
   });
 
   // Update Project with the new description
+  // usage: PUT desc=
   routes.put('/:project_name', (req, res) => {
     const name = req.params.project_name;
     const desc = req.body.desc;
     assert(typeof name === 'string');
     Project.findOneAndUpdate({name}, {$set: {description: desc}}, err => {
       assert(!err);
-      res.json({status: 'ok'});
+      res.jsonp({status: 'ok'});
     });
   });
   
   // Remove Project with given name
   routes.delete('/:project_name', (req, res) => {
     const name = req.params.project_name;
+    const {id} = req.user;
     assert(typeof name === 'string');
+    assert(id);
     Project.remove({name}, err => {
       assert(!err);
-      res.json({status: 'ok'});
+      User.findByIdAndUpdate(id, {$pull: {roles: {project: name}}}, err => {
+        assert(!err);
+        res.jsonp({status: 'ok'});
+      });
     });
   });
+  
+  // Add a new group to project
+  // usage: POST name=
+  routes.post('/:project_name/groups?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {name} = req.body;
+    assert(name);
+    assert(typeof name === 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName}, {$addToSet: {groups: name}}, (err) => {
+      assert(!err);
+      res.jsonp({"status": 'ok'});
+    });
+  });
+
+  // delete group from project
+  // usage: DELETE name=
+  routes.delete('/:project_name/groups?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {name} = req.body;
+    assert(name);
+    assert(typeof name === 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName}, {$pull: {groups: name}}, err => {
+      assert(!err);
+      res.jsonp({"status": 'ok'});
+    });
+  });
+
+  // Add a new rule to project
+  // usage: POST group=&role=
+  routes.post('/:project_name/rules?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {group, role} = req.body;
+    assert(group);
+    assert(role);
+    assert(typeof group === 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName}, {$push: {rules: {group, role}}}, err => {
+      assert(!err);
+      res.jsonp({"status": 'ok'});
+    });
+  });
+
+  // edit rule in a project
+  // usage: PUT group=&role=
+  routes.put('/:project_name/rules?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {group, role} = req.body;
+    assert(group);
+    assert(role);
+    assert(typeof group === 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName, 'rules.group': group}, {$set: {'rules.$.role': role}}, err => {
+      assert(!err);
+      res.jsonp({"status": 'ok'});
+    });
+  });
+
+  // delete rule from project
+  // usage: DELETE group=
+  routes.delete('/:project_name/rules?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {group} = req.body;
+    assert(group);
+    assert(typeof group === 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName}, {$pull: {rules: {group: group}}}, err => {
+      assert(!err);
+      res.jsonp({"status": 'ok'});
+    });
+  });
+
+  // Add a new client to project
+  // usage: POST name=
+  routes.post('/:project_name/clients?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {name} = req.body;
+    assert(name);
+    assert(typeof name == 'string');
+    assert(projectName);
+    Project.findOneAndUpdate({name: projectName}, {$push: {clients: name}}, err => {
+      assert(!err);
+      Client.findOneAndUpdate({name}, {$addToSet: {groups: projectName}}, (err, client) => {
+        assert(!err);
+        if (client)  
+          return res.jsonp({"status": 'ok'});
+        Client.create({name, groups: [projectName]}, (err,client) => {
+          assert(!err);
+          assert(client);
+          res.jsonp({"status": 'ok'});
+        });
+      });
+    });
+  });
+
+  // delete client from project
+  // usage: DELETE name=
+  routes.delete('/:project_name/clients?', (req, res) => {
+    const projectName = req.params.project_name;
+    const {name} = req.body;
+    assert(name);
+    assert(projectName);
+    assert(typeof name === 'string');
+    Project.findOneAndUpdate({name: projectName}, {$pull: {clients: name}}, err => {
+      assert(!err);
+      Client.findOneAndUpdate({name}, {$pull: {groups: projectName}}, err => {
+        assert(!err);
+        res.jsonp({"status": 'ok'});
+      });
+    });
+  });
+
   app.use('/projects?', routes);
 };
 
